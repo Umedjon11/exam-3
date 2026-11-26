@@ -1,0 +1,22 @@
+services:
+  redis:
+    image: redis:7-alpine
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/exam-3
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  celery:
+    build: .
+    command: celery -A server worker -l info
+    volumes:
+     - .:/exam-3
+    depends_on:
+      - redis
+      - web
